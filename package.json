@@ -1,0 +1,8 @@
+{
+  "name": "serverless-shortlinker",
+  "version": "1.0.0",
+  "description": "Long URLs can be inconvenient to use, especially in correspondence. To solve this problem, there are services that shorten long links. We need to build our own costefficient and flexible API for a link shortener application.",
+  "main": "app.js",
+  "author": "Oleksii Obabko",
+  "license": "ISC"
+}
