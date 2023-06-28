@@ -1,7 +1,12 @@
 import {Router} from "express";
 
-import {isBodySignUpValid, isEmailUnique} from "../middlewares";
-import {signUp} from "../controllers";
+import {
+	isBodyLoginValid,
+	isBodySignUpValid,
+	isEmailUnique, isPasswordsSame,
+	isUserExistsByEmail,
+} from "../middlewares";
+import {signIn, signUp} from "../controllers";
 
 const oauthRouter = Router();
 
@@ -9,7 +14,15 @@ oauthRouter.post(
 	"/sign-up",
 	isBodySignUpValid,
 	isEmailUnique,
-	signUp
+	signUp,
+);
+
+oauthRouter.post(
+	"/sign-in",
+	isBodyLoginValid,
+	isUserExistsByEmail,
+	isPasswordsSame,
+	signIn,
 );
 
 export {oauthRouter};

@@ -16,6 +16,9 @@ functions:
       - http:
           path: /auth/sign-up
           method: POST
+      - http:
+          path: /auth/sign-in
+          method: POST
 
 resources:
   Resources:
@@ -44,3 +47,28 @@ resources:
             ProvisionedThroughput:
               ReadCapacityUnits: 1
               WriteCapacityUnits: 1
+    OauthTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: OauthTable
+        AttributeDefinitions:
+          - AttributeName: accessToken
+            AttributeType: S
+          - AttributeName: refreshToken
+            AttributeType: S
+        KeySchema:
+          - AttributeName: accessToken
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+          GlobalSecondaryIndexes:
+            - IndexName: RefreshIndex
+              KeySchema:
+                - AttributeName: refreshToken
+                  KeyType: HASH
+              Projection:
+                ProjectionType: ALL
+              ProvisionedThroughput:
+                ReadCapacityUnits: 1
+                WriteCapacityUnits: 1
