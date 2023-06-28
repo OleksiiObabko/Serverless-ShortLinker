@@ -1,5 +1,4 @@
 service: nodejs-aws-lambda
-
 provider:
   name: aws
   runtime: nodejs14.x
@@ -7,20 +6,16 @@ provider:
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - dynamodb:GetItem
-        - dynamodb:DescribeStream
-        - dynamodb:GetRecords
-        - dynamodb:GetShardIterator
-        - dynamodb:ListStream
-        - dynamodb:PutItem
+        - dynamodb:*
       Resource: '*'
 
 functions:
-  app:
+  sign-up:
     handler: dist/app.handler
     events:
-      - http: ANY /
-      - http: ANY /{proxy+}
+      - http:
+          path: /auth/sign-up
+          method: POST
 
 resources:
   Resources:
@@ -31,9 +26,21 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
+          - AttributeName: email
+            AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: EmailIndex
+            KeySchema:
+              - AttributeName: email
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1

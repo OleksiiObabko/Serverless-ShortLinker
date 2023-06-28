@@ -1,14 +1,18 @@
-import express, {Request, Response, NextFunction} from "express";
+import {config} from "dotenv";
+
+config();
+import express, {NextFunction, Request, Response} from "express";
 import serverless from "serverless-http";
 
-import router from "./router";
+import {PORT} from "./configs";
+import {oauthRouter} from "./routers";
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-app.use("/", router);
+app.use("/auth", oauthRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 	res.status(err.status || 500).json({
@@ -17,7 +21,8 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 	});
 });
 
-app.listen(5000, async () => {
-	console.log("Server is listening port: 5000");
+app.listen(+PORT, async () => {
+	console.log(`Server is listening port: ${PORT}`);
 });
+
 export const handler = serverless(app);
