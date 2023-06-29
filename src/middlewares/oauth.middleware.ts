@@ -2,10 +2,16 @@ import {NextFunction, Request, Response} from "express";
 
 import {signUpValidator} from "../validators";
 import {ApiError} from "../errors";
-import {getOneByEmail} from "../repositories";
-import {checkPassword, getV4Uuid} from "../services";
-import {USER_EMAIL_EXISTS, WRONG_LOGIN_OR_PASS} from "../enums";
-import {IRequestBody, IUser} from "../interfaces";
+import {findTokenPair, getOneByEmail} from "../repositories";
+import {checkPassword, checkToken, getV4Uuid} from "../services";
+import {
+	ACCESS_TOKEN_TYPE, NO_TOKEN,
+	NO_TOKEN_IN_DB,
+	USER_EMAIL_EXISTS,
+	WRONG_LOGIN_OR_PASS,
+} from "../enums";
+import {removeBearer} from "../helpers";
+import {IRequestBody, ITokenData, IUser} from "../interfaces";
 
 const isBodySignUpValid = async (req: Request, res: Response, next: NextFunction) => {
 	try {
@@ -51,7 +57,7 @@ const isBodyLoginValid = async (req: Request, res: Response, next: NextFunction)
 
 const isUserExistsByEmail = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const userInDb = await getOneByEmail(req.body.email);
+		const userInDb: IUser | undefined = await getOneByEmail(req.body.email);
 
 		if (!userInDb) return next(new ApiError(WRONG_LOGIN_OR_PASS, 401));
 
@@ -66,10 +72,28 @@ const isPasswordsSame = async (req: Request, res: Response, next: NextFunction) 
 	try {
 		const {body, userInDb} = req;
 
-		const isPasswordsSame = await checkPassword(body.password, userInDb.password);
+		const isPasswordsSame: boolean = await checkPassword(body.password, userInDb.password);
 
 		if (!isPasswordsSame) return next(new ApiError(WRONG_LOGIN_OR_PASS, 401));
 
+		next();
+	} catch (e) {
+		next(e);
+	}
+};
+
+const checkAccessToken = async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const header = req.get("Authorization");
+		if (!header) return next(new ApiError(NO_TOKEN, 401));
+
+		const accessToken: string = removeBearer(header);
+		checkToken(accessToken, ACCESS_TOKEN_TYPE);
+
+		const tokensInDb: ITokenData | undefined = await findTokenPair(accessToken);
+		if (!tokensInDb) return next(new ApiError(NO_TOKEN_IN_DB, 401));
+
+		req.userTokens = tokensInDb;
 		next();
 	} catch (e) {
 		next(e);
@@ -82,4 +106,5 @@ export {
 	isBodyLoginValid,
 	isUserExistsByEmail,
 	isPasswordsSame,
+	checkAccessToken,
 };

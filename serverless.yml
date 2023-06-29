@@ -18,8 +18,17 @@ functions:
       - http:
           path: /auth/sign-up
           method: POST
+  sign-in:
+    handler: dist/app.handler
+    events:
       - http:
           path: /auth/sign-in
+          method: POST
+  link-create:
+    handler: dist/app.handler
+    events:
+      - http:
+          path: /link
           method: POST
 
 resources:
@@ -68,6 +77,31 @@ resources:
           - IndexName: RefreshIndex
             KeySchema:
               - AttributeName: refreshToken
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+    LinkTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: LinkTable
+        AttributeDefinitions:
+          - AttributeName: shortUrl
+            AttributeType: S
+          - AttributeName: user_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: shortUrl
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: UserIdIndex
+            KeySchema:
+              - AttributeName: user_id
                 KeyType: HASH
             Projection:
               ProjectionType: ALL

@@ -5,7 +5,7 @@ import express, {NextFunction, Request, Response} from "express";
 import serverless from "serverless-http";
 
 import {PORT} from "./configs";
-import {oauthRouter} from "./routers";
+import {linkRouter, oauthRouter} from "./routers";
 
 const app = express();
 
@@ -13,11 +13,12 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use("/auth", oauthRouter);
+app.use("/link", linkRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 	res.status(err.status || 500).json({
 		message: err.message || "Unknown error",
-		status: err.status || 500
+		status: err.status || 500,
 	});
 });
 

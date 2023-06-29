@@ -8,7 +8,7 @@ import {
 } from "../middlewares";
 import {signIn, signUp} from "../controllers";
 
-const oauthRouter = Router();
+const oauthRouter: Router = Router();
 
 oauthRouter.post(
 	"/sign-up",

@@ -1,8 +1,10 @@
 import {hash, compare} from "bcryptjs";
-import {sign} from "jsonwebtoken";
+import {sign, verify} from "jsonwebtoken";
 
 import {ACCESS_LIFE_TIME, ACCESS_SECRET, REFRESH_LIFE_TIME, REFRESH_SECRET} from "../configs";
 import {ITokenPair} from "../interfaces";
+import {ACCESS_TOKEN_TYPE, REFRESH_TOKEN_TYPE, TOKEN_NOT_VALID} from "../enums";
+import {ApiError} from "../errors";
 
 const hashPassword = (password: string): Promise<string> => hash(password, 10);
 
@@ -19,4 +21,23 @@ const generateTokenPair = (dataToSign: dataToSign): ITokenPair => {
 	return {accessToken, refreshToken};
 };
 
-export {hashPassword, checkPassword, generateTokenPair};
+const checkToken = (token = "", tokenType = ACCESS_TOKEN_TYPE) => {
+	try {
+		let secretWord = "";
+
+		switch (tokenType) {
+		case ACCESS_TOKEN_TYPE:
+			secretWord = ACCESS_SECRET;
+			break;
+		case REFRESH_TOKEN_TYPE:
+			secretWord = REFRESH_SECRET;
+			break;
+		}
+
+		return verify(token, secretWord);
+	} catch (e) {
+		throw new ApiError(TOKEN_NOT_VALID, 401);
+	}
+};
+
+export {hashPassword, checkPassword, generateTokenPair, checkToken};
