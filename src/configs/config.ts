@@ -6,6 +6,8 @@ const REFRESH_SECRET: string = process.env.REFRESH_SECRET || "secretRefreshWord"
 const ACCESS_LIFE_TIME: string = process.env.ACCESS_LIFE_TIME || "60m";
 const REFRESH_LIFE_TIME: string = process.env.REFRESH_LIFE_TIME || "1d";
 
+const NO_REPLY_EMAIL: string = process.env.NO_REPLY_EMAIL || "email@fff.com";
+
 export {
 	PORT,
 	AWS_REGION,
@@ -13,4 +15,5 @@ export {
 	REFRESH_SECRET,
 	ACCESS_LIFE_TIME,
 	REFRESH_LIFE_TIME,
+	NO_REPLY_EMAIL,
 };

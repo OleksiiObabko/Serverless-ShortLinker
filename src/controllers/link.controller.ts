@@ -1,11 +1,9 @@
 import {NextFunction, Request, Response} from "express";
 
-import {create, deactivate, findByShort, getList} from "../repositories";
+import {create, deactivate, getList} from "../repositories";
 import {generateShortId, getSomeDaysAfter} from "../services";
 import {linkPresenter} from "../presenters";
 import {ILink, ILinkBody, IRequestBody} from "../interfaces";
-import {ApiError} from "../errors";
-import {LINK_NOT_FOUND} from "../enums";
 
 const createLink = async (req: IRequestBody<ILinkBody>, res: Response, next: NextFunction) => {
 	try {
@@ -56,12 +54,11 @@ const deactivateLink = async (req: Request, res: Response, next: NextFunction) =
 
 const redirectToOriginal = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const {shortUrl} = req.params;
-		const link = await findByShort(shortUrl);
+		const {isOneTime, shortUrl, originalUrl} = req.link;
 
-		if (!link?.originalUrl) return next(new ApiError(LINK_NOT_FOUND, 404));
+		if (isOneTime) await deactivate(shortUrl);
 
-		res.redirect(link.originalUrl);
+		res.redirect(originalUrl);
 	} catch (e) {
 		next(e);
 	}

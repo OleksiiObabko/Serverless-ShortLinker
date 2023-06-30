@@ -3,7 +3,7 @@ import {NextFunction, Request, Response} from "express";
 import {createLinkValidator} from "../validators";
 import {ApiError} from "../errors";
 import {checkShortId} from "../services";
-import {LINK_NOT_FOUND, LINK_NOT_YOURS, SHORT_URL_NOT_VALID} from "../enums";
+import {LINK_NOT_ACTIVE, LINK_NOT_FOUND, LINK_NOT_YOURS, SHORT_URL_NOT_VALID} from "../enums";
 import {findByShort} from "../repositories";
 import {ILink} from "../interfaces";
 
@@ -45,4 +45,18 @@ const isLinkYours = async (req: Request, res: Response, next: NextFunction) => {
 	}
 };
 
-export {isBodyCreateValid, isShortLinkValid, isLinkYours};
+const isLinkActive = async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const link: ILink | undefined = await findByShort(req.params.shortUrl);
+
+		if (!link) return next(new ApiError(LINK_NOT_FOUND, 404));
+		if (!link.isActive) return next(new ApiError(LINK_NOT_ACTIVE, 400));
+
+		req.link = link;
+		next();
+	} catch (e) {
+		next(e);
+	}
+};
+
+export {isBodyCreateValid, isShortLinkValid, isLinkYours, isLinkActive};
