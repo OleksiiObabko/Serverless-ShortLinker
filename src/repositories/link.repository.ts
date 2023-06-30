@@ -21,4 +21,17 @@ const findByShort = async (shortUrl: string): Promise<ILink | undefined> => {
 	return Item as ILink | undefined;
 };
 
-export {create, findByShort};
+const getList = async (userId: string): Promise<ILink[]> => {
+	const {Items} = await dynamodb.query({
+		TableName: tableName,
+		IndexName: "UserIdIndex",
+		KeyConditionExpression: "user_id = :userIdValue",
+		ExpressionAttributeValues: {
+			":userIdValue": userId,
+		},
+	}).promise();
+
+	return Items as ILink[];
+};
+
+export {create, findByShort, getList};

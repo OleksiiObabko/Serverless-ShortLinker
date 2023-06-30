@@ -1,6 +1,6 @@
-import {NextFunction, Response} from "express";
+import {NextFunction, Request, Response} from "express";
 
-import {create} from "../repositories";
+import {create, getList} from "../repositories";
 import {generateShortId, getSomeDaysAfter} from "../services";
 import {linkPresenter} from "../presenters";
 import {ILink, ILinkBody, IRequestBody} from "../interfaces";
@@ -30,5 +30,16 @@ const createLink = async (req: IRequestBody<ILinkBody>, res: Response, next: Nex
 	}
 };
 
+const getMyLinks = async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const {user_id} = req.userTokens;
 
-export {createLink};
+		const myLinks = await getList(user_id);
+
+		res.status(200).json(myLinks);
+	} catch (e) {
+		next(e);
+	}
+};
+
+export {createLink, getMyLinks};
