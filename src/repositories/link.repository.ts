@@ -34,4 +34,15 @@ const getList = async (userId: string): Promise<ILink[]> => {
 	return Items as ILink[];
 };
 
-export {create, findByShort, getList};
+const deactivate = async (shortUrl: string): Promise<void> => {
+	await dynamodb.update({
+		TableName: tableName,
+		Key: {shortUrl},
+		UpdateExpression: "SET isActive = :value",
+		ExpressionAttributeValues: {
+			":value": false,
+		},
+	}).promise();
+};
+
+export {create, findByShort, getList, deactivate};

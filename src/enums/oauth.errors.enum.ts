@@ -3,7 +3,6 @@ const WRONG_LOGIN_OR_PASS = "Wrong login or password";
 const NO_TOKEN = "No token";
 const TOKEN_NOT_VALID = "Token not valid";
 const NO_TOKEN_IN_DB = "No token in database";
-const SHORT_URL_EXISTS = "URL with this shortUrl already exists";
 
 export {
 	USER_EMAIL_EXISTS,
@@ -11,5 +10,4 @@ export {
 	NO_TOKEN,
 	TOKEN_NOT_VALID,
 	NO_TOKEN_IN_DB,
-	SHORT_URL_EXISTS,
 };

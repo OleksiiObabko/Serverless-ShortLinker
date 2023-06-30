@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 
-import {create, getList} from "../repositories";
+import {create, deactivate, getList} from "../repositories";
 import {generateShortId, getSomeDaysAfter} from "../services";
 import {linkPresenter} from "../presenters";
 import {ILink, ILinkBody, IRequestBody} from "../interfaces";
@@ -42,4 +42,16 @@ const getMyLinks = async (req: Request, res: Response, next: NextFunction) => {
 	}
 };
 
-export {createLink, getMyLinks};
+const deactivateLink = async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const {shortUrl} = req.params;
+
+		await deactivate(shortUrl);
+
+		res.sendStatus(204);
+	} catch (e) {
+		next(e);
+	}
+};
+
+export {createLink, getMyLinks, deactivateLink};

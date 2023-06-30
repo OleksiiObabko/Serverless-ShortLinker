@@ -1,4 +1,4 @@
-import {generate} from "shortid";
+import {generate, isValid} from "shortid";
 
 import {findByShort} from "../repositories";
 import {ApiError} from "../errors";
@@ -14,5 +14,7 @@ const generateShortId = async (): Promise<string> => {
 	return shortUrl;
 };
 
-export {generateShortId};
+const checkShortId = (shortId: string): boolean => isValid(shortId);
+
+export {generateShortId, checkShortId};
 

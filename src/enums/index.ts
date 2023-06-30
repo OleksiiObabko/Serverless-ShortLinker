@@ -1,3 +1,4 @@
 export * from "./regexp.enum";
-export * from "./error.msgs.enum";
+export * from "./link.errors.enum";
 export * from "./token.types.enum";
+export * from "./oauth.errors.enum";

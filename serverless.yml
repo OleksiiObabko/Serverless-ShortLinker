@@ -30,6 +30,12 @@ functions:
       - http:
           path: /link
           method: POST
+  list-my-links:
+    handler: dist/app.handler
+    events:
+      - httpApi:
+          path: /link
+          method: GET
 
 resources:
   Resources:

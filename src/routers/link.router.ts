@@ -1,7 +1,7 @@
 import {Router} from "express";
 
-import {checkAccessToken, isBodyCreateValid} from "../middlewares";
-import {createLink, getMyLinks} from "../controllers";
+import {checkAccessToken, isBodyCreateValid, isLinkYours, isShortLinkValid} from "../middlewares";
+import {createLink, deactivateLink, getMyLinks} from "../controllers";
 
 const linkRouter: Router = Router();
 
@@ -16,6 +16,14 @@ linkRouter.get(
 	"/",
 	checkAccessToken,
 	getMyLinks,
+);
+
+linkRouter.put(
+	"/:shortUrl",
+	isShortLinkValid,
+	checkAccessToken,
+	isLinkYours,
+	deactivateLink,
 );
 
 export {linkRouter};
