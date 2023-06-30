@@ -1,9 +1,11 @@
 import {NextFunction, Request, Response} from "express";
 
-import {create, deactivate, getList} from "../repositories";
+import {create, deactivate, findByShort, getList} from "../repositories";
 import {generateShortId, getSomeDaysAfter} from "../services";
 import {linkPresenter} from "../presenters";
 import {ILink, ILinkBody, IRequestBody} from "../interfaces";
+import {ApiError} from "../errors";
+import {LINK_NOT_FOUND} from "../enums";
 
 const createLink = async (req: IRequestBody<ILinkBody>, res: Response, next: NextFunction) => {
 	try {
@@ -44,9 +46,7 @@ const getMyLinks = async (req: Request, res: Response, next: NextFunction) => {
 
 const deactivateLink = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const {shortUrl} = req.params;
-
-		await deactivate(shortUrl);
+		await deactivate(req.params.shortUrl);
 
 		res.sendStatus(204);
 	} catch (e) {
@@ -54,4 +54,17 @@ const deactivateLink = async (req: Request, res: Response, next: NextFunction) =
 	}
 };
 
-export {createLink, getMyLinks, deactivateLink};
+const redirectToOriginal = async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const {shortUrl} = req.params;
+		const link = await findByShort(shortUrl);
+
+		if (!link?.originalUrl) return next(new ApiError(LINK_NOT_FOUND, 404));
+
+		res.redirect(link.originalUrl);
+	} catch (e) {
+		next(e);
+	}
+};
+
+export {createLink, getMyLinks, deactivateLink, redirectToOriginal};

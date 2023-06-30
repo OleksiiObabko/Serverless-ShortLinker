@@ -36,6 +36,18 @@ functions:
       - httpApi:
           path: /link
           method: GET
+  link-deactivate:
+    handler: dist/app.handler
+    events:
+      - httpApi:
+          path: /link:shortUrl
+          method: PUT
+  link-redirect:
+    handler: dist/app.handler
+    events:
+      - httpApi:
+          path: /link:shortUrl
+          method: GET
 
 resources:
   Resources:
