@@ -66,4 +66,13 @@ const deactivateAllExpired = async (date: number): Promise<ILink[]> => {
 	return items;
 };
 
-export {create, findByShort, getList, deactivate, deactivateAllExpired};
+const incrementVisits = async (shortUrl: string): Promise<void> => {
+	await dynamodb.update({
+		TableName: tableName,
+		Key: {shortUrl},
+		UpdateExpression: "SET visits = visits + :inc",
+		ExpressionAttributeValues: {":inc": 1},
+	}).promise();
+};
+
+export {create, findByShort, getList, deactivate, deactivateAllExpired, incrementVisits};

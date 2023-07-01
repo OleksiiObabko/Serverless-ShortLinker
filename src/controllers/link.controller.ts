@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 
-import {create, deactivate, getList} from "../repositories";
+import {create, deactivate, getList, incrementVisits} from "../repositories";
 import {generateShortId, getSomeDaysAfter} from "../services";
 import {linkPresenter} from "../presenters";
 import {ILink, ILinkBody, IRequestBody} from "../interfaces";
@@ -56,6 +56,7 @@ const redirectToOriginal = async (req: Request, res: Response, next: NextFunctio
 	try {
 		const {isOneTime, shortUrl, originalUrl} = req.link;
 
+		await incrementVisits(shortUrl);
 		if (isOneTime) await deactivate(shortUrl);
 
 		res.redirect(originalUrl);
