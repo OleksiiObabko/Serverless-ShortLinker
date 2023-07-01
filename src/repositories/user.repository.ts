@@ -1,4 +1,4 @@
-import {QueryOutput} from "aws-sdk/clients/dynamodb";
+import {GetItemOutput, QueryOutput} from "aws-sdk/clients/dynamodb";
 
 import {dynamodb} from "../dataBases";
 import {IUser} from "../interfaces";
@@ -25,4 +25,13 @@ const createUser = async (userData: IUser): Promise<void> => {
 	}).promise();
 };
 
-export {createUser, getOneByEmail};
+const getOneById = async (id: string): Promise<IUser | undefined> => {
+	const {Item}: GetItemOutput = await dynamodb.get({
+		TableName: tableName,
+		Key: {id},
+	}).promise();
+
+	return Item as IUser | undefined;
+};
+
+export {createUser, getOneByEmail, getOneById};

@@ -45,4 +45,25 @@ const deactivate = async (shortUrl: string): Promise<void> => {
 	}).promise();
 };
 
-export {create, findByShort, getList, deactivate};
+const deactivateAllExpired = async (date: number): Promise<ILink[]> => {
+	const scanResult = await dynamodb.scan({
+		TableName: tableName,
+		FilterExpression: "activeUntil < :activeUntilValue AND activeUntil <> :zeroValue AND isActive = :isActiveValue",
+		ExpressionAttributeValues: {":activeUntilValue": date, ":isActiveValue": true, ":zeroValue": 0},
+	}).promise();
+	const items: ILink[] = scanResult.Items as ILink[];
+
+	const updatePromises: Promise<void>[] = items.map(async ({shortUrl}) => {
+		await dynamodb.update({
+			TableName: tableName,
+			Key: {shortUrl},
+			UpdateExpression: "SET isActive = :isActiveValue",
+			ExpressionAttributeValues: {":isActiveValue": false},
+		}).promise();
+	});
+
+	await Promise.all(updatePromises);
+	return items;
+};
+
+export {create, findByShort, getList, deactivate, deactivateAllExpired};

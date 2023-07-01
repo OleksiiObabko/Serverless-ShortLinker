@@ -13,42 +13,15 @@ provider:
           Resource: "*"
 
 functions:
-  sign-up:
+  deactivateEpx:
+    handler: dist/crons/deactivateExpired.handler
+    events:
+      - schedule: rate(1 hour)
+  app:
     handler: dist/app.handler
     events:
-      - http:
-          path: /auth/sign-up
-          method: POST
-  sign-in:
-    handler: dist/app.handler
-    events:
-      - http:
-          path: /auth/sign-in
-          method: POST
-  link-create:
-    handler: dist/app.handler
-    events:
-      - http:
-          path: /link
-          method: POST
-  list-my-links:
-    handler: dist/app.handler
-    events:
-      - httpApi:
-          path: /link
-          method: GET
-  link-deactivate:
-    handler: dist/app.handler
-    events:
-      - httpApi:
-          path: /link:shortUrl
-          method: PUT
-  link-redirect:
-    handler: dist/app.handler
-    events:
-      - httpApi:
-          path: /link:shortUrl
-          method: GET
+      - http: ANY /
+      - http: ANY /{proxy+}
 
 resources:
   Resources:
