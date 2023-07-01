@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use("/auth", oauthRouter);
-app.use("/link", linkRouter);
+app.use("/", linkRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 	res.status(err.status || 500).json({

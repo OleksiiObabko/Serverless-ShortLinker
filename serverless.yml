@@ -1,8 +1,19 @@
 service: nodejs-aws-lambda
+
+custom:
+  env: ${file(env.json)}
+
 provider:
   name: aws
   runtime: nodejs14.x
   region: us-east-1
+  environment:
+    PORT: ${self:custom.env.PORT}
+    ACCESS_SECRET: ${self:custom.env.ACCESS_SECRET}
+    REFRESH_SECRET: ${self:custom.env.REFRESH_SECRET}
+    ACCESS_LIFE_TIME: ${self:custom.env.ACCESS_LIFE_TIME}
+    REFRESH_LIFE_TIME: ${self:custom.env.REFRESH_LIFE_TIME}
+    NO_REPLY_EMAIL: ${self:custom.env.NO_REPLY_EMAIL}
   iam:
     role:
       statements:
@@ -13,15 +24,15 @@ provider:
           Resource: "*"
 
 functions:
-  deactivateEpx:
-    handler: dist/crons/deactivateExpired.handler
-    events:
-      - schedule: rate(1 hour)
   app:
     handler: dist/app.handler
     events:
       - http: ANY /
       - http: ANY /{proxy+}
+  deactivate-expired-links:
+    handler: dist/crons/deactivateExpired.handler
+    events:
+      - schedule: rate(1 minute)
 
 resources:
   Resources:

@@ -3,3 +3,4 @@ Serverless-ShortLinker.iml
 .env
 dist
 .serverless
+env.json
