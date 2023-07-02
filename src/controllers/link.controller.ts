@@ -2,7 +2,7 @@ import {NextFunction, Request, Response} from "express";
 
 import {create, deactivate, getList, incrementVisits} from "../repositories";
 import {generateShortId, getSomeDaysAfter} from "../services";
-import {linkPresenter} from "../presenters";
+import {linkPresenter, linksPresenter} from "../presenters";
 import {ILink, ILinkBody, IRequestBody} from "../interfaces";
 
 const createLink = async (req: IRequestBody<ILinkBody>, res: Response, next: NextFunction) => {
@@ -36,7 +36,7 @@ const getMyLinks = async (req: Request, res: Response, next: NextFunction) => {
 
 		const myLinks = await getList(user_id);
 
-		res.status(200).json(myLinks);
+		res.status(200).json(linksPresenter(myLinks));
 	} catch (e) {
 		next(e);
 	}

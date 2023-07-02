@@ -9,6 +9,7 @@ provider:
   region: us-east-1
   environment:
     PORT: ${self:custom.env.PORT}
+    BASE_URL: ${self:custom.env.BASE_URL}
     ACCESS_SECRET: ${self:custom.env.ACCESS_SECRET}
     REFRESH_SECRET: ${self:custom.env.REFRESH_SECRET}
     ACCESS_LIFE_TIME: ${self:custom.env.ACCESS_LIFE_TIME}

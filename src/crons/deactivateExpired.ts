@@ -2,7 +2,7 @@ import serverless from "serverless-http";
 
 import {getCurrentDate, sendEmail} from "../services";
 import {deactivateAllExpired, getOneById} from "../repositories";
-import {NO_REPLY_EMAIL} from "../configs";
+import {BASE_URL, NO_REPLY_EMAIL} from "../configs";
 import {DEACTIVATE_FAILED} from "../enums";
 import {ILink, IUser} from "../interfaces";
 
@@ -17,7 +17,7 @@ const deactivateExpired = async () => {
 						NO_REPLY_EMAIL,
 						user.email,
 						"Deactivated link",
-						`Your link ${shortUrl} has been deactivated`
+						`Your link ${BASE_URL + "/" + shortUrl} has been deactivated`
 					);
 				}
 			});
