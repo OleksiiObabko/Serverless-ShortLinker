@@ -23,6 +23,7 @@ Example env.json:
 {
   "PORT": "5000",
   "AWS_REGION": "us-east-1",
+  "BASE_URL": "https://43xkn51hzh.execute-api.us-east-1.amazonaws.com/dev",
   "ACCESS_SECRET": "your access secret",
   "REFRESH_SECRET": "your refresh secret",
   "ACCESS_LIFE_TIME": "60m",
