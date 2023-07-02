@@ -51,9 +51,9 @@ const deactivateAllExpired = async (date: number): Promise<ILink[]> => {
 		FilterExpression: "activeUntil < :activeUntilValue AND activeUntil <> :zeroValue AND isActive = :isActiveValue",
 		ExpressionAttributeValues: {":activeUntilValue": date, ":isActiveValue": true, ":zeroValue": 0},
 	}).promise();
-	const items: ILink[] = scanResult.Items as ILink[];
+	const expiredLinks: ILink[] = scanResult.Items as ILink[];
 
-	const updatePromises: Promise<void>[] = items.map(async ({shortUrl}) => {
+	const updatePromises: Promise<void>[] = expiredLinks.map(async ({shortUrl}) => {
 		await dynamodb.update({
 			TableName: tableName,
 			Key: {shortUrl},
@@ -63,7 +63,7 @@ const deactivateAllExpired = async (date: number): Promise<ILink[]> => {
 	});
 
 	await Promise.all(updatePromises);
-	return items;
+	return expiredLinks;
 };
 
 const incrementVisits = async (shortUrl: string): Promise<void> => {

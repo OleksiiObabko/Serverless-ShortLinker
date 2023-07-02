@@ -9,23 +9,24 @@ import {ILink, IUser} from "../interfaces";
 const deactivateExpired = async () => {
 	try {
 		const currentDate = getCurrentDate();
-		deactivateAllExpired(currentDate).then(async (expiredLinks: ILink[]) => {
-			const emailPromises = expiredLinks.map(async ({user_id, shortUrl}) => {
-				const user: IUser | undefined = await getOneById(user_id);
-				if (user) {
-					return sendEmail(
-						NO_REPLY_EMAIL,
-						user.email,
-						"Deactivated link",
-						`Your link ${BASE_URL + "/" + shortUrl} has been deactivated`
-					);
-				}
-			});
+		const expiredLinks: ILink[] = await deactivateAllExpired(currentDate);
 
-			if (emailPromises.length) {
-				await Promise.all(emailPromises);
+		const emailPromises: Promise<void>[] = expiredLinks.map(async ({user_id, shortUrl}) => {
+			const user: IUser | undefined = await getOneById(user_id);
+
+			if (user) {
+				return sendEmail(
+					NO_REPLY_EMAIL,
+					user.email,
+					"Deactivated link",
+					`Your link ${BASE_URL}/${shortUrl} has been deactivated`
+				);
 			}
 		});
+
+		if (emailPromises.length) {
+			await Promise.allSettled(emailPromises);
+		}
 	} catch (e: any) {
 		return {
 			statusCode: 500,
