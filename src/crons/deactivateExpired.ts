@@ -3,10 +3,10 @@ import serverless from "serverless-http";
 import {getCurrentDate} from "../services";
 import {deactivateAllExpired} from "../repositories";
 import {DEACTIVATE_FAILED} from "../enums";
-import {ILink} from "../interfaces";
 import {sqsService} from "../services/sqs.service";
+import {ILink} from "../interfaces";
 
-export const deactivateExpired = async () => {
+const deactivateExpired = async () => {
 	try {
 		const currentDate = getCurrentDate();
 		const expiredLinks: ILink[] = await deactivateAllExpired(currentDate);
