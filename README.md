@@ -49,7 +49,7 @@ npm run build
 serverless deploy
 
 ```
-After first deploy insert aws link to env.json file, then redeploy project
+After first deploy insert AWS_LINK and QUEUE_URL to env.json file, then redeploy project
 
 ```
 npm run build

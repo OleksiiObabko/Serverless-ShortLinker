@@ -1,6 +1,7 @@
 const PORT: string = process.env.PORT || "5000";
 const AWS_REGION: string = process.env.AWS_REGION || "us-east-1";
 const BASE_URL: string = process.env.BASE_URL || "http://...";
+const QUEUE_URL: string = process.env.QUEUE_URL || "https://sqs.us-east-1.amazonaws.com/339539064906/TestQueue";
 
 const ACCESS_SECRET: string = process.env.ACCESS_SECRET || "secretAccessWord";
 const REFRESH_SECRET: string = process.env.REFRESH_SECRET || "secretRefreshWord";
@@ -18,4 +19,5 @@ export {
 	REFRESH_LIFE_TIME,
 	NO_REPLY_EMAIL,
 	BASE_URL,
+	QUEUE_URL
 };

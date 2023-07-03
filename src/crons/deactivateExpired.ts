@@ -1,32 +1,17 @@
 import serverless from "serverless-http";
 
-import {getCurrentDate, sendEmail} from "../services";
-import {deactivateAllExpired, getOneById} from "../repositories";
-import {BASE_URL, NO_REPLY_EMAIL} from "../configs";
+import {getCurrentDate} from "../services";
+import {deactivateAllExpired} from "../repositories";
 import {DEACTIVATE_FAILED} from "../enums";
-import {ILink, IUser} from "../interfaces";
+import {ILink} from "../interfaces";
+import {sqsService} from "../services/sqs.service";
 
-const deactivateExpired = async () => {
+export const deactivateExpired = async () => {
 	try {
 		const currentDate = getCurrentDate();
 		const expiredLinks: ILink[] = await deactivateAllExpired(currentDate);
 
-		const emailPromises: Promise<void>[] = expiredLinks.map(async ({user_id, shortUrl}) => {
-			const user: IUser | undefined = await getOneById(user_id);
-
-			if (user) {
-				return sendEmail(
-					NO_REPLY_EMAIL,
-					user.email,
-					"Deactivated link",
-					`Your link ${BASE_URL}/${shortUrl} has been deactivated`
-				);
-			}
-		});
-
-		if (emailPromises.length) {
-			await Promise.allSettled(emailPromises);
-		}
+		await sqsService(expiredLinks);
 	} catch (e: any) {
 		return {
 			statusCode: 500,

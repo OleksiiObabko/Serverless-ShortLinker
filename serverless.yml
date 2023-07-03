@@ -22,6 +22,7 @@ provider:
           Action:
             - dynamodb:*
             - ses:*
+            - sqs:*
           Resource: "*"
 
 functions:
@@ -37,6 +38,10 @@ functions:
 
 resources:
   Resources:
+    MyQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: TestQueue
     UserTable:
       Type: AWS::DynamoDB::Table
       Properties:

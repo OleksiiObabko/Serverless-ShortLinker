@@ -1,10 +1,12 @@
 import {SES} from "aws-sdk";
 
+import {NO_REPLY_EMAIL} from "../configs";
+
 const ses = new SES();
 
-const sendEmail = async (source: string, destination: string, subject: string, body: string) => {
+const sendEmail = async (destination: string, subject: string, body: string) => {
 	const params = {
-		Source: source,
+		Source: NO_REPLY_EMAIL,
 		Destination: {
 			ToAddresses: [destination],
 		},
